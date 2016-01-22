@@ -1,0 +1,86 @@
+body {
+	padding: 3em 0 0 0;
+	margin: 0;
+}
+
+.ow_site_panel {
+	background: #2196F3 url('http://spod.routetopa.eu/ow_static/themes/rtpa_matter/images/logo.png') .5em 50% no-repeat;
+	min-height:60px;
+}
+
+.ow_console_right {
+	float: right;
+	padding-left: 14px;
+	padding-left: 14px;
+}
+
+.ow_console_item, .ow_console_item:last-child {
+	padding: 1.4em;
+	display: inline-block;
+}
+
+a.ow_console_item {
+	text-decoration: none;
+	color: #fff;
+}
+
+a.ow_console_item:hover {
+	text-decoration: underline;
+}
+
+.ow_footer {
+	margin-top: 90px;
+}
+
+.ow_footer .ow_canvas {
+	padding-top: 1.5em;
+}
+
+#content {
+    padding: 0.5em;
+    max-width: 50em;
+}
+
+ul.error {
+    background: #ffaaaa;
+    border: 1px solid #ff0000;
+    padding: 0.5em;
+    padding-left: 1.5em;
+}
+
+.login th {
+    text-align: left;
+}
+
+div.login p {
+    margin-top: 0;
+}
+
+pre {
+    padding: 1em;
+    border: 1px solid black;
+    background: #ffeebb;
+}
+
+#checkup {
+    background: url('http://openid.net/favicon.ico') no-repeat;
+    padding-left: 16px;
+}
+
+form table td.buttons {
+	text-align: center;
+	padding-top: 16px;
+}
+
+form th, form td {
+	text-align: left;
+	border: 0;
+}
+
+input {
+	-width: 20em;
+}
+
+.uuid {
+	font-family: monospace;
+}
