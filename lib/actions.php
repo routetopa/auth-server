@@ -144,11 +144,13 @@ function action_login()
 
         list ($errors, $user) = login_checkInput($fields);
 
-        if ($needed) {
-            $errors[] = sprintf('login_needed', link_render($needed));
-        }
+
 
         if (count($errors) || !$user) {
+            if ($needed) {
+                $errors[] = sprintf('login_needed', link_render($needed));
+            }
+
             $t = getSmarty();
             $t->assign('login_url', $login_url);
             $t->assign('id_url', idURL('USERNAME'));
