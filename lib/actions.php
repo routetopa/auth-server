@@ -32,7 +32,10 @@ function action_default()
     $request = $server->decodeRequest();
 
     if (!$request) {
-        return about_render();
+        $t = getSmarty();
+        $t->assign('right_menu', build_menu());
+        return [ array(), $t->fetch('index.tpl') ];
+        //return about_render();
     }
 
     setRequestInfo($request);
@@ -134,6 +137,7 @@ function action_login()
             $needed = $info ? $info->identity : false;
             return login_render($errors, @$fields['openid_url'], $needed);
         } else {
+            flash('message', 'You are now logged in.');
             setLoggedInUser($user);
             return doAuth($info);
         }
@@ -170,4 +174,76 @@ function action_userXrds()
     return userXrds_render($identity);
 }
 
-?>
+function action_profile() {
+    $user = getLoggedInProfile();
+    $errors = [];
+
+    $method = $_SERVER['REQUEST_METHOD'];
+    switch ($method) {
+        case 'GET';
+            $t = getSmarty();
+            $t->assign('user', $user);
+            $t->assign('errors', $errors);
+            $t->assign('right_menu', build_menu());
+            return [ array(), $t->fetch('profile.tpl') ];
+            break;
+        case 'POST':
+            $uuid = $user['uuid'];
+            $uuid_confirm = @$_POST['uuid'];
+            $email = trim(@$_POST['email']);
+            $password = @$_POST['password'];
+            $password_confirm = @$_POST['password_confirm'];
+
+            if (empty($uuid_confirm)) {
+                $errors[] = 'Request not valid';
+            }
+            if ($uuid != $uuid_confirm) {
+                $errors[] = 'Request not valid';
+            }
+            if (empty($email)) {
+                //$errors[] = 'Email required';
+            }
+            if ($password != $password_confirm) {
+                $errors[] = 'Password and confirmation do not match';
+            }
+            if ($user === false) {
+                $errors[] = 'Internal error, please contact system administrator';
+            }
+            if ($user === null) {
+                $errors[] = 'User not found';
+            }
+
+            //$user['email'] = $email;
+
+            if (count($errors) > 0) {
+                $t = getSmarty();
+                $t->assign('user', $user);
+                $t->assign('errors', $errors);
+                $t->assign('right_menu', build_menu());
+                return [array(), $t->fetch('profile.tpl')];
+            }
+
+            $user['password'] = $password;
+            $res = db_saveUser($user);
+            flash('message', 'Your profile was successfully updated');
+            return redirect_render('../');
+            break;
+        default:
+            return '';
+    }
+}
+
+function action_forgotpassword() {
+    // todo
+    $method = $_SERVER['REQUEST_METHOD'];
+    switch ($method) {
+        case 'GET';
+            $t = getSmarty();
+            return [ array(), $t->fetch('forgot_password.tpl') ];
+            break;
+        case 'POST':
+
+        default:
+            return '';
+    }
+}

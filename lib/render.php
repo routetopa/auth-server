@@ -20,21 +20,21 @@ define('header_content_text', 'Content-Type: text/plain; charset=us-ascii');
 define('redirect_message',
        'Please wait; you are being redirected to <%s>');
 
-function buildMenu() {
+function build_menu() {
+    global $server_url;
     $nav = [];
     $user = getLoggedInProfile();
     if ($user) {
         $nav[] = [ 'title' => $user['email'], 'url' => '' ];
+        $nav[] = [ 'title' => 'Profile', 'url' => $server_url . '/profile' ];
         if ($user['is_admin']) {
-            $nav[] = [ 'title' => 'Admin', 'url' => '' ];
+            $nav[] = [ 'title' => 'Admin', 'url' => $server_url . '/admin_users' ];
         }
-        $nav[] = [ 'title' => 'Sign out', 'url' => 'logout' ];
+        $nav[] = [ 'title' => 'Sign out', 'url' => $server_url . '/logout' ];
+    } else {
+        $nav[] = [ 'title' => 'Sign in', 'url' => $server_url . '/login' ];
     }
     return $nav;
-}
-
-function render2() {
-
 }
 
 /**
