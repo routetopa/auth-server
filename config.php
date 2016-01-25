@@ -8,9 +8,14 @@
  *
  * This must be a full URL.
  */
-$server_url = "http://spod.routetopa.eu/openid";
-
-$server_url = 'http://localhost/openid/index.php';
+$config = (include 'config.dev.php');
+if (empty($config)) {
+    $config = (include 'config.prod.php');
+}
+if (empty($config)) {
+    die('Configuration file not found');
+}
+$server_url = $config['server_url'];
 
 /**
  * Initialize an OpenID store
@@ -20,24 +25,12 @@ $server_url = 'http://localhost/openid/index.php';
  */
 function getOpenIDStore()
 {
+    global $config;
+
     require_once 'Auth/OpenID/MySQLStore.php';
     require_once 'DB.php';
 
-    $dsn = array(
-         'phptype'  => 'mysql',
-         'username' => 'openid',
-         'password' => 'sp0dopen1d82645',
-         'hostspec' => 'localhost'
-         );
-
-    $dsn = array(
-        'phptype'  => 'mysql',
-        'username' => 'root',
-        'password' => '',
-        'hostspec' => 'localhost'
-    );
-
-    $db = DB::connect($dsn);
+    $db = DB::connect($config['db']);
 
     if (PEAR::isError($db)) {
         return null;
