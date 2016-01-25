@@ -1,3 +1,5 @@
 vendor
 .idea
 lib/templates_c
+config.prod.php
+config.dev.php
