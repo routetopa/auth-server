@@ -14,13 +14,12 @@
             <li class="ow_console_item"><a  href="{$menu_entry.url}">{if isset($menu_entry.key)}{t key=$menu_entry.key}{else}{$menu_entry.title}{/if}</a></li>
         {/foreach}
             <li class="ow_console_item">
-                <a href="#">Language</a>
+                <a href="#" class="lang lang-{$current_lang}">{$current_lang|upper}</a>
                 <ul>
                     {assign var="ret" value=$smarty.server.REQUEST_URI|escape:"url"}
-                    <li><a href="{buildURL('language?lang=en&ret=')}{$ret}">EN</a></li>
-                    <li><a href="{buildURL('language?lang=it&ret=')}{$ret}">IT</a></li>
-                    <li><a href="{buildURL('language?lang=nl&ret=')}{$ret}">NL</a></li>
-                    <li><a href="{buildURL('language?lang=fr&ret=')}{$ret}">FR</a></li>
+                    {foreach ['en', 'it', 'nl', 'fr'] as $lang}
+                    <li><a class="lang lang-{$lang}" href="{buildURL("language?lang=$lang&ret=$ret")}">{$lang|upper}</a></li>
+                    {/foreach}
                 </ul>
             </li>
     </ul>

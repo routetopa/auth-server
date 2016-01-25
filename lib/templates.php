@@ -19,6 +19,7 @@ class SmartyT extends Smarty {
         $file = substr($template, 0, strrpos($template, '.'));
         // Try loading translation, or use 'en' as fallback
         $strings = array_merge($strings, $this->getStrings($lang, $file));
+        $this->assign('current_lang', $lang);
         $this->assign('l', $strings);
         return parent::fetch($template, $cache_id, $compile_id, $parent, $display, $merge_tpl_vars, $no_output_filter);
     }

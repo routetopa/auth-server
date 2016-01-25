@@ -258,12 +258,8 @@ function action_profile() {
 }
 
 function action_language() {
-    $lang = @$_GET['lang'];
-    if (!$lang && isset($_SESSION['lang'])) {
-        unset($_SESSION['lang']);
-    } else {
-        $_SESSION['lang'] = $lang;
-    }
+    $lang = strtolower(@$_GET['lang'] ?: 'en');
+    $_SESSION['lang'] = $lang;
     $ret = @$_GET['ret'] ?: buildURL();
     return redirect_render($ret);
 }
