@@ -9,11 +9,20 @@
 </head>
 <body>
 <div class="ow_site_panel clearfix">
-    <div class="ow_console_right">
+    <ul class="ow_console_right">
         {foreach $right_menu|default:array() as $menu_entry}
-            <a class="ow_console_item" href="{$menu_entry.url}">{$menu_entry.title}</a>
+            <li class="ow_console_item"><a  href="{$menu_entry.url}">{if isset($menu_entry.key)}{t key=$menu_entry.key}{else}{$menu_entry.title}{/if}</a></li>
         {/foreach}
-    </div>
+            <li class="ow_console_item">
+                <a href="#">Language</a>
+                <ul>
+                    {assign var="ret" value=$smarty.server.REQUEST_URI|escape:"url"}
+                    <li><a href="{buildURL('language?lang=en&ret=')}{$ret}">EN</a></li>
+                    <li><a href="{buildURL('language?lang=it&ret=')}{$ret}">IT</a></li>
+                    <li><a href="{buildURL('language?lang=nl&ret=')}{$ret}">NL</a></li>
+                    <li><a href="{buildURL('language?lang=fr&ret=')}{$ret}">FR</a></li>
+                </ul>
+            </li>
+    </ul>
 </div>
 <div id="content">
-    {flash('message')}

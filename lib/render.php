@@ -26,13 +26,13 @@ function build_menu() {
     $user = getLoggedInProfile();
     if ($user) {
         $nav[] = [ 'title' => $user['email'], 'url' => '' ];
-        $nav[] = [ 'title' => 'Profile', 'url' => $server_url . '/profile' ];
+        $nav[] = [ 'key' => 'nav_profile', 'url' => $server_url . '/profile' ];
         if ($user['is_admin']) {
-            $nav[] = [ 'title' => 'Admin', 'url' => $server_url . '/admin_users' ];
+            $nav[] = [ 'key' => 'nav_admin', 'url' => $server_url . '/admin_users' ];
         }
-        $nav[] = [ 'title' => 'Sign out', 'url' => $server_url . '/logout' ];
+        $nav[] = [ 'key' => 'nav_logout', 'url' => $server_url . '/logout' ];
     } else {
-        $nav[] = [ 'title' => 'Sign in', 'url' => $server_url . '/login' ];
+        $nav[] = [ 'key' => 'nav_login', 'url' => $server_url . '/login' ];
     }
     return $nav;
 }

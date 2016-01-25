@@ -57,26 +57,28 @@ function db_getUsers() {
 function db_authUserByEmail($email, $password) {
     $store = getOpenIDStore();
     $errors = [];
+    $user = NULL;
     $res = $store->connection->query(
         "SELECT uuid, email, password, is_admin FROM users WHERE email = ?",
         [ $email ]
     );
 
     if (PEAR::isError($res)) {
-        $errors[] = 'Server error';
+        $errors[] = 'login_msg_server_error';
     } else if (1 != $res->numRows()) {
-        $errors[] = 'Invalid Username';
+        $errors[] = 'login_msg_invalid';
     }
 
     if (count($errors) == 0) {
-        $user = $res->fetchRow();
-        if (password_verify($password, $user['password'])) {
-            unset($user['password']);
-            return $user;
+        $row = $res->fetchRow();
+        if (TRUE === password_verify($password, $row['password'])) {
+            unset($row['password']);
+            $user = $row;
+        } else {
+            $errors = 'login_msg_invalid';
         }
     }
-
-    return false;
+    return [$errors, $user];
 }
 
 function db_getUserByUuid($uuid) {

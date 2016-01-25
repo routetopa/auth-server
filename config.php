@@ -45,13 +45,4 @@ function getOpenIDStore()
     return $s;
 }
 
-function getSmarty() {
-    require_once('Smarty.class.php');
-    $libPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib';
-    $s = new Smarty();
-    $s->setTemplateDir($libPath . DIRECTORY_SEPARATOR . 'templates');
-    $s->setCompileDir($libPath . DIRECTORY_SEPARATOR . 'templates_c');
-    $s->setCacheDir($libPath . DIRECTORY_SEPARATOR . 'templates_cache');
-    $s->setConfigDir($libPath . DIRECTORY_SEPARATOR . 'templates_conf');
-    return $s;
-}
+include('lib/templates.php');

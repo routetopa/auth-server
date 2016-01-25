@@ -9,23 +9,50 @@ body {
 }
 
 .ow_console_right {
+	margin-top: 0;
+	padding-top: 0;
 	float: right;
-	padding-left: 14px;
-	padding-left: 14px;
+	padding-left: 8px;
+	padding-left: 8px;
 }
 
 .ow_console_item, .ow_console_item:last-child {
-	padding: 1.4em;
 	display: inline-block;
+	position: relative;
 }
 
-a.ow_console_item {
+.ow_console_right li {
+	padding: 0;
+}
+
+.ow_console_item a {
+	display: inline-block;
 	text-decoration: none;
+	padding: 1.4em;
 	color: #fff;
 }
 
-a.ow_console_item:hover {
+.ow_console_item a:hover {
 	text-decoration: underline;
+	background-color: #3bb0ff;
+}
+
+.ow_console_item ul {
+	display: none;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 4em;
+	background-color: #2196F3;
+}
+
+.ow_console_item:hover ul {
+	display: block;
+}
+
+.ow_console_item ul a {
+	width: 100%;
+	padding: .7em 1.4em;
 }
 
 .ow_footer {
@@ -85,7 +112,7 @@ input {
 	font-family: monospace;
 }
 
-#msg-flash {
+#msg-flash, .errors {
 	padding: 15px;
 	margin: 20px 0;
 	border: 1px solid #ccc;
@@ -98,7 +125,7 @@ input {
 	border-color: #d6e9c6;
 }
 
-#msg-flash.danger {
+#msg-flash.danger, .errors {
 	color: #a94442;
 	background-color: #f2dede;
 	border-color: #ebccd1;

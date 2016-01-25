@@ -101,17 +101,19 @@ function action_logout()
  */
 function login_checkInput($input)
 {
-    $user = false;
+    $user = NULL;
     $errors = array();
 
     if (empty($input['openid_url'])) {
-        $errors[] = 'Enter an OpenID URL to continue';
+        $errors[] = 'login_msg_no_email';
     }
     if (empty($input['openid_pass'])) {
-        $errors[] = 'Enter password to continue';
+        $errors[] = 'login_msg_no_password';
     }
 
-    $user = db_authUserByEmail($input['openid_url'], $input['openid_pass']);
+    if (!$errors) {
+        list($errors, $user) = db_authUserByEmail($input['openid_url'], $input['openid_pass']);
+    }
 
     return array($errors, $user);
 }
@@ -122,22 +124,40 @@ function login_checkInput($input)
 function action_login()
 {
     $method = $_SERVER['REQUEST_METHOD'];
+    $login_url = buildURL('login', true);
+
     switch ($method) {
     case 'GET':
-        return login_render();
+        $t = getSmarty();
+        $t->assign('login_url', $login_url);
+        $t->assign('id_url', idURL('USERNAME'));
+        $t->assign('email', '');
+        return [ array(), $t->fetch('login.tpl') ];
     case 'POST':
         $info = getRequestInfo();
+        $needed = $info ? $info->identity : false;
+
         $fields = $_POST;
         if (isset($fields['cancel'])) {
             return authCancel($info);
         }
 
         list ($errors, $user) = login_checkInput($fields);
+
+        if ($needed) {
+            $errors[] = sprintf('login_needed', link_render($needed));
+        }
+
         if (count($errors) || !$user) {
-            $needed = $info ? $info->identity : false;
-            return login_render($errors, @$fields['openid_url'], $needed);
+            $t = getSmarty();
+            $t->assign('login_url', $login_url);
+            $t->assign('id_url', idURL('USERNAME'));
+            $t->assign('email', @$fields['openid_url']);
+            $t->assign('errors', $errors);
+            $t->assign('needed', $needed);
+            return [ array(), $t->fetch('login.tpl') ];
         } else {
-            flash('message', 'You are now logged in.');
+            flash('message', 'message_login_ok');
             setLoggedInUser($user);
             return doAuth($info);
         }
@@ -194,23 +214,27 @@ function action_profile() {
             $password = @$_POST['password'];
             $password_confirm = @$_POST['password_confirm'];
 
+            if (isset($_POST['cancel'])) {
+                return redirect_render('../');
+            }
+
             if (empty($uuid_confirm)) {
-                $errors[] = 'Request not valid';
+                $errors[] = 'profile_msg_unvalid_request';
             }
             if ($uuid != $uuid_confirm) {
-                $errors[] = 'Request not valid';
+                $errors[] = 'profile_msg_unvalid_request';
             }
             if (empty($email)) {
                 //$errors[] = 'Email required';
             }
             if ($password != $password_confirm) {
-                $errors[] = 'Password and confirmation do not match';
+                $errors[] = 'password_mismatch';
             }
             if ($user === false) {
-                $errors[] = 'Internal error, please contact system administrator';
+                $errors[] = 'profile_msg_error_internal';
             }
             if ($user === null) {
-                $errors[] = 'User not found';
+                $errors[] = 'profile_msg_user_not_found';
             }
 
             //$user['email'] = $email;
@@ -225,12 +249,23 @@ function action_profile() {
 
             $user['password'] = $password;
             $res = db_saveUser($user);
-            flash('message', 'Your profile was successfully updated');
+            flash('message', 'profile_msg_update_ok');
             return redirect_render('../');
             break;
         default:
             return '';
     }
+}
+
+function action_language() {
+    $lang = @$_GET['lang'];
+    if (!$lang && isset($_SESSION['lang'])) {
+        unset($_SESSION['lang']);
+    } else {
+        $_SESSION['lang'] = $lang;
+    }
+    $ret = @$_GET['ret'] ?: buildURL();
+    return redirect_render($ret);
 }
 
 function action_forgotpassword() {
