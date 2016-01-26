@@ -22,6 +22,7 @@ function action_admin_users() {
 
     $t = getSmarty();
     $t->assign( 'users', $res );
+    $t->assign('right_menu', build_menu());
     return [ array(), $t->fetch('admin_users_index.tpl') ];
 }
 
@@ -44,6 +45,7 @@ function action_admin_users_edit() {
                 $t = getSmarty();
                 $t->assign('user', $user);
                 $t->assign('errors', $errors);
+                $t->assign('right_menu', build_menu());
                 return [array(), $t->fetch('admin_users_edit.tpl')];
             }
             break;
@@ -79,6 +81,7 @@ function action_admin_users_edit() {
                 $t = getSmarty();
                 $t->assign('user', $user);
                 $t->assign('errors', $errors);
+                $t->assign('right_menu', build_menu());
                 return [array(), $t->fetch('admin_users_edit.tpl')];
             }
 
@@ -104,6 +107,7 @@ function action_admin_users_create() {
             $t = getSmarty();
             $t->assign('user', $user);
             $t->assign('errors', $errors);
+            $t->assign('right_menu', build_menu());
             return [array(), $t->fetch('admin_users_edit.tpl')];
             break;
 
@@ -128,6 +132,7 @@ function action_admin_users_create() {
                 $t = getSmarty();
                 $t->assign('user', $user);
                 $t->assign('errors', $errors);
+                $t->assign('right_menu', build_menu());
                 return [array(), $t->fetch('admin_users_edit.tpl')];
             }
 
@@ -138,6 +143,7 @@ function action_admin_users_create() {
                 $t = getSmarty();
                 $t->assign('user', $user);
                 $t->assign('errors', $errors);
+                $t->assign('right_menu', build_menu());
                 return [array(), $t->fetch('admin_users_edit.tpl')];
             }
 
@@ -168,6 +174,7 @@ function action_admin_users_delete() {
                 $t = getSmarty();
                 $t->assign('user', $user);
                 $t->assign('errors', $errors);
+                $t->assign('right_menu', build_menu());
                 return [array(), $t->fetch('admin_users_delete.tpl')];
             }
             break;
@@ -196,6 +203,7 @@ function action_admin_users_delete() {
                 $t = getSmarty();
                 $t->assign('user', $user);
                 $t->assign('errors', $errors);
+                $t->assign('right_menu', build_menu());
                 return [array(), $t->fetch('admin_users_delete.tpl')];
             }
 
