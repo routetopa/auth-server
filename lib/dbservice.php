@@ -81,6 +81,22 @@ function db_authUserByEmail($email, $password) {
     return [$errors, $user];
 }
 
+function db_getUserByEmail($email) {
+    $store = getOpenIDStore();
+    $errors = [];
+    $res = $store->connection->query(
+        "SELECT uuid, email, is_admin FROM users WHERE email = ?",
+        [ $email ]
+    );
+    if (PEAR::isError($res)) {
+        $errors[] = 'Server error';
+    }
+    if ($res->numRows() <= 0) {
+        return null;
+    }
+    return (count($errors) > 0) ? false : $res->fetchRow();
+}
+
 function db_getUserByUuid($uuid) {
     $store = getOpenIDStore();
     $errors = [];
@@ -190,4 +206,92 @@ function db_deleteUser($user) {
     $store->connection->commit();
 
     return [$user, $errors];
+}
+
+function db_createPasswordResetToken($user) {
+    $store = getOpenIDStore();
+    $errors = [];
+    $token = null;
+    $res = null;
+
+    while (true) { // Will exit with a break...
+        $token = md5( $user['email'] . time() . openssl_random_pseudo_bytes(16) );
+        $res = $store->connection->query(
+            'DELETE FROM password_reset WHERE email = ?',
+            [$user['email']]
+        );
+
+        if (!(PEAR::isError($res))) {
+            $store->connection->query(
+                'INSERT INTO password_reset(email, token, timestamp) VALUES (?, ?, NOW())',
+                [$user['email'], md5($token)]);
+        }
+        if (PEAR::isError($res)) {
+            $store->connection->rollback();
+            $token = null;
+        } else {
+            $store->connection->commit();
+            break;
+        }
+    }
+
+    return [$token, $errors];
+}
+
+function db_checkPasswordResetToken($email, $token) {
+    $store = getOpenIDStore();
+    $isValid = false;
+    $errors = [];
+    $res = null;
+
+    if (!$errors) {
+        $res = $store->connection->query(
+            'SELECT email, token, timestamp FROM password_reset WHERE email = ? ORDER BY timestamp DESC LIMIT 1',
+            [$email]
+        );
+    }
+
+    if (!$errors && PEAR::isError($res)) {
+        $errors[] = 'Server error';
+    }
+
+    if (!$errors && $res->numRows() <= 0) {
+        $errors[] = 'pwdrst_token_not_found';
+    }
+
+    if (!$errors) {
+        $row = $res->fetchRow();
+        if (md5($token) != $row['token']) {
+            $errors[] = 'pwdrst_token_not_found';
+        } else {
+            $isValid = true;
+        }
+    }
+
+    return [$isValid, $errors];
+}
+
+function db_removePasswordResetToken($user) {
+    $store = getOpenIDStore();
+    $isDeleted = false;
+    $errors = [];
+    $res = null;
+
+    if (!$errors) {
+        $res = $store->connection->query(
+            'DELETE FROM password_reset WHERE email = ? LIMIT 1',
+            [$user['email']]
+        );
+    }
+
+    if (PEAR::isError($res)) {
+        $store->connection->rollback();
+        $token = null;
+        $isDeleted = false;
+    } else {
+        $store->connection->commit();
+        $isDeleted = true;
+    }
+
+    return [$isDeleted, $errors];
 }

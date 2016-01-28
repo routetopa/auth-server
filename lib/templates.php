@@ -21,6 +21,11 @@ class SmartyT extends Smarty {
         $strings = array_merge($strings, $this->getStrings($lang, $file));
         $this->assign('current_lang', $lang);
         $this->assign('l', $strings);
+        // Default menu id not present
+        if (!$this->getTemplateVars('right_menu')) {
+            $this->assign('right_menu', build_menu());
+        }
+        // Render template
         return parent::fetch($template, $cache_id, $compile_id, $parent, $display, $merge_tpl_vars, $no_output_filter);
     }
 

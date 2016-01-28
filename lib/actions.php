@@ -33,7 +33,6 @@ function action_default()
 
     if (!$request) {
         $t = getSmarty();
-        $t->assign('right_menu', build_menu());
         return [ array(), $t->fetch('index.tpl') ];
         //return about_render();
     }
@@ -144,8 +143,6 @@ function action_login()
 
         list ($errors, $user) = login_checkInput($fields);
 
-
-
         if (count($errors) || !$user) {
             if ($needed) {
                 $errors[] = sprintf('login_needed', link_render($needed));
@@ -206,7 +203,6 @@ function action_profile() {
             $t = getSmarty();
             $t->assign('user', $user);
             $t->assign('errors', $errors);
-            $t->assign('right_menu', build_menu());
             return [ array(), $t->fetch('profile.tpl') ];
             break;
         case 'POST':
@@ -245,7 +241,6 @@ function action_profile() {
                 $t = getSmarty();
                 $t->assign('user', $user);
                 $t->assign('errors', $errors);
-                $t->assign('right_menu', build_menu());
                 return [array(), $t->fetch('profile.tpl')];
             }
 
@@ -266,16 +261,160 @@ function action_language() {
     return redirect_render($ret);
 }
 
-function action_forgotpassword() {
-    // todo
+function action_password_reset() {
     $method = $_SERVER['REQUEST_METHOD'];
+    $reset_url = buildURL('password_reset', true);
+
     switch ($method) {
         case 'GET';
+            $token = @$_GET['token'] ?: '';
+            // ACCESS WITH TOKEN (ask new password)
+            if ($token) {
+                $email = @$_GET['user'];
+                $user = null;
+                $errors = [];
+                $isValid = false;
+                if (!$email) {
+                    $errors[] = 'pwdrst_missing_parameter';
+                }
+                if (!$errors) {
+                    $user = db_getUserByEmail($email);
+                    if (!$user) {
+                        $errors[] = 'pwdrst_missing_parameter';
+                    }
+                }
+                if (!$errors) {
+                    list($isValid, $errors) = db_checkPasswordResetToken($email, $token);
+                }
+                $t = getSmarty();
+                $t->assign('token', $token);
+                $t->assign('email', $user['email']);
+                $t->assign('errors', $errors);
+                return [ array(), $t->fetch('password_reset_change.tpl') ];
+
+            }
+            // SHOW SENT MESSAGE (access upon redirect)
+            $sent = @$_GET['sent'] ?: '';
+            if ($sent) {
+                $t = getSmarty();
+                $t->assign('email', urldecode($sent));
+                return [ array(), $t->fetch('password_reset_sent.tpl') ];
+            }
+            // SHOW RESET MESSAGE (access upon redirect)
+            $done = @$_GET['done'] ?: '';
+            if ($done) {
+                $t = getSmarty();
+                $t->assign('email', urldecode($sent));
+                return [ array(), $t->fetch('password_reset_done.tpl') ];
+            }
+            // ACCESS WITHOUT TOKEN (ask email to reset)
             $t = getSmarty();
-            return [ array(), $t->fetch('forgot_password.tpl') ];
+            $t->assign('reset_url', $reset_url);
+            $t->assign('email', '');
+            return [ array(), $t->fetch('password_reset.tpl') ];
             break;
         case 'POST':
+            // CHANGE PASSWORD
+            if (@$_POST['action'] == 'do_reset') {
+                $user = null;
+                $errors = [];
+                $email = @$_POST['email'] ?: '';
+                $token = @$_POST['token'] ?: '';
+                $password = @$_POST['password'] ?: '';
+                $password_confirm = @$_POST['password_confirm'] ?: '';
 
+                if (!$email || !$token) {
+                    $errors[] = 'pwdrst_msg_unvalid_request';
+                }
+                if (!$password) {
+                    $errors[] = 'pwdrst_msg_password_missing';
+                } else if ($password !== $password_confirm) {
+                    $errors[] = 'password_mismatch';
+                }
+                if (!$errors) {
+                    $user = db_getUserByEmail($email);
+                    if (!$user) {
+                        $errors[] = 'pwdrst_msg_user_not_found';
+                    }
+                }
+                if (!$errors) {
+                    $user['password'] = $password;
+                    $user = db_saveUser($user);
+                    if (!$user) {
+                        $errors[] = 'pwdrst_msg_error_internal';
+                    }
+                    if (!$errors) {
+                        list($isDeleted, $errors) = db_removePasswordResetToken($user);
+                    }
+                    if (!$errors) {
+                        return redirect_render( buildURL('password_reset?done=' . urlencode($email)) );
+                    }
+                }
+                $t = getSmarty();
+                $t->assign('token', $token);
+                $t->assign('email', $email);
+                $t->assign('errors', $errors);
+                return [ array(), $t->fetch('password_reset_change.tpl') ];
+            }
+            // ASK FOR EMAIL
+            $errors = [];
+            $email = @$_POST['openid_url'] ?: '';
+            $user = null;
+            $t = getSmarty();
+            $t->assign('reset_url', $reset_url);
+            $t->assign('email', $email);
+
+            if (!$email) {
+                $errors[] = 'pwdrst_err_nomail';
+            }
+
+            if (!$errors) {
+                $user = db_getUserByEmail($email);
+                if (!$user) {
+                    $errors[] = 'pwdrst_err_nouser';
+                }
+            }
+
+            if (!$errors) {
+                list($token, $errors) = db_createPasswordResetToken($user);
+            }
+
+            if ($errors) {
+                $t->assign('errors', $errors);
+                return [ array(), $t->fetch('password_reset.tpl') ];
+            }
+
+            if ($token) {
+                require 'PHPMailerAutoload.php';
+                $tokenUrl = buildURL('password_reset?user=' . urlencode($user['email']) . '&token=' . $token);
+
+                $mail = new PHPMailer;
+                $mail->isSMTP();
+                $mail->Host = 'smtp-server';
+                $mail->SMTPAuth = true;
+                $mail->Username = '';
+                $mail->Password = '';
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 587;
+
+                $mail->setFrom('', 'ROUTE-TO-PA');
+                $mail->addAddress($user['email']);     // Add a recipient
+                $mail->isHTML(true);                                  // Set email format to HTML
+
+                $mail->Subject = 'ROUTE-TO-PA Password reset';
+                $mail->Body    = '<a href="'.$tokenUrl.'">'.$tokenUrl.'</a>';
+                $mail->AltBody = $tokenUrl;
+
+                if(!$mail->send()) {
+                    flash('message', 'message_mail_error', 'danger');
+                    //echo 'Mailer Error: ' . $mail->ErrorInfo;
+                } else {
+                    flash('message', 'message_mail_ok');
+                }
+                return redirect_render( buildURL('password_reset?sent=' . urlencode($email)) );
+            }
+
+            return [ array(), $t->fetch('password_reset.tpl') ];
         default:
             return '';
     }
