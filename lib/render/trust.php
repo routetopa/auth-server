@@ -39,9 +39,10 @@ Please return to the relying party and try again.
 function trust_render($info)
 {
     /**/
+    global $config;
     $user = getLoggedInUser();
     $trust_root = $info->trust_root;
-    $trustedHosts = [ 'spod.routetopa.eu', 'localhost' ];
+    $trustedHosts = $config['trusted_roots'];
     $root_host = parse_url($trust_root, PHP_URL_HOST);
     $trusted = in_array($root_host, $trustedHosts);
     $req_url = idURL($user);

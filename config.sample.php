@@ -22,4 +22,8 @@ return [
         'from_address' => 'gmail-account@gmail.com',
         'from_name' => 'The ROUTE-TO-PA Project',
     ],
+    'trusted_roots' => [
+        'localhost',
+        'spod.routetopa.eu',
+    ]
 ];
