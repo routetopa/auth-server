@@ -125,6 +125,10 @@ function login_checkInput($input)
  */
 function action_login()
 {
+    if (getLoggedInUser()) {
+        return redirect_render(buildURL());
+    }
+
     $method = $_SERVER['REQUEST_METHOD'];
     $login_url = buildURL('login', true);
 
