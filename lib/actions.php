@@ -90,9 +90,12 @@ function action_default()
  */
 function action_logout()
 {
+    $return_url = @$_GET['return_url'];
     setLoggedInUser(null);
     setRequestInfo(null);
-    return authCancel(null);
+    $authCancelRes = authCancel(null);
+
+    return $return_url ? redirect_render($return_url) : $authCancelRes;
 }
 
 /**
