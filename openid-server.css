@@ -83,6 +83,11 @@ div.login p {
     margin-top: 0;
 }
 
+a.password_reset {
+	display: inline-block;
+	margin-left: 1git em
+}
+
 pre {
     padding: 1em;
     border: 1px solid black;

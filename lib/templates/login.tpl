@@ -29,6 +29,7 @@
                             <input type="submit" name="cancel" value="{t key='login_btn_cancel'}" class="ow_positive ow_ic_close" />
                         </span>
                     </span>
+                    <a class="password_reset" href="{$password_reset_url}">I forgot my password</a>
                 </td>
             </tr>
         </table>

@@ -129,6 +129,7 @@ function action_login()
     case 'GET':
         $t = getSmarty();
         $t->assign('login_url', $login_url);
+        $t->assign('password_reset_url', buildURL('password_reset'));
         $t->assign('id_url', idURL('USERNAME'));
         $t->assign('email', '');
         return [ array(), $t->fetch('login.tpl') ];
@@ -142,7 +143,6 @@ function action_login()
         }
 
         list ($errors, $user) = login_checkInput($fields);
-
         if (count($errors) || !$user) {
             if ($needed) {
                 $errors[] = sprintf('login_needed', link_render($needed));
@@ -150,6 +150,7 @@ function action_login()
 
             $t = getSmarty();
             $t->assign('login_url', $login_url);
+            $t->assign('password_reset_url', buildURL('password_reset'));
             $t->assign('id_url', idURL('USERNAME'));
             $t->assign('email', @$fields['openid_url']);
             $t->assign('errors', $errors);
@@ -172,6 +173,7 @@ function action_trust()
 {
     $info = getRequestInfo();
     $trusted = isset($_POST['trust']);
+
     //return doAuth($info, $trusted, true, @$_POST['idSelect']);
     return doAuth($info, $trusted, true, getLoggedInUser());
 }
@@ -385,25 +387,33 @@ function action_password_reset() {
             }
 
             if ($token) {
+                global $config;
                 require 'PHPMailerAutoload.php';
+
                 $tokenUrl = buildURL('password_reset?user=' . urlencode($user['email']) . '&token=' . $token);
+
+                $t = getSmarty();
+                $t->assign('home_url', buildURL());
+                $t->assign('reset_url', $tokenUrl);
+                $mailBody = $t->fetch('password_reset.mail.tpl');
+                $langs = $t->getTemplateVars('l');
 
                 $mail = new PHPMailer;
                 $mail->isSMTP();
-                $mail->Host = 'smtp-server';
-                $mail->SMTPAuth = true;
-                $mail->Username = '';
-                $mail->Password = '';
-                $mail->SMTPSecure = 'tls';
-                $mail->Port = 587;
+                $mail->Host = $config['mail']['host'];
+                $mail->SMTPAuth = $config['mail']['smtp_auth'];
+                $mail->Username = $config['mail']['username'];
+                $mail->Password = $config['mail']['password'];
+                $mail->SMTPSecure = $config['mail']['smtp_secure'];
+                $mail->Port = $config['mail']['port'];
 
-                $mail->setFrom('', 'ROUTE-TO-PA');
-                $mail->addAddress($user['email']);     // Add a recipient
-                $mail->isHTML(true);                                  // Set email format to HTML
+                $mail->setFrom($config['mail']['from_address'], $langs['pswrst_email_from_name']);
+                $mail->addAddress($user['email']);
+                $mail->isHTML(true);
 
                 $mail->Subject = 'ROUTE-TO-PA Password reset';
-                $mail->Body    = '<a href="'.$tokenUrl.'">'.$tokenUrl.'</a>';
-                $mail->AltBody = $tokenUrl;
+                $mail->Body    = $mailBody;
+                $mail->AltBody = $langs['pswrst_email_content'] . "\r\n\r\n" . $tokenUrl;
 
                 if(!$mail->send()) {
                     flash('message', 'message_mail_error', 'danger');

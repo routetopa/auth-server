@@ -38,6 +38,16 @@ Please return to the relying party and try again.
 
 function trust_render($info)
 {
+    /**/
+    $user = getLoggedInUser();
+    $trust_root = $info->trust_root;
+    $trustedHosts = [ 'spod.routetopa.eu', 'localhost' ];
+    $root_host = parse_url($trust_root, PHP_URL_HOST);
+    $trusted = in_array($root_host, $trustedHosts);
+    $req_url = idURL($user);
+    if ($trusted) { return doAuth($info, true, true, $req_url); }
+    /**/
+
     $current_user = getLoggedInUser();
     $lnk = link_render(idURL($current_user));
     $trust_root = htmlspecialchars($info->trust_root);
