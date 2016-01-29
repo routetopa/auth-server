@@ -75,7 +75,7 @@ function db_authUserByEmail($email, $password) {
             unset($row['password']);
             $user = $row;
         } else {
-            $errors = 'login_msg_invalid';
+            $errors[] = 'login_msg_invalid';
         }
     }
     return [$errors, $user];

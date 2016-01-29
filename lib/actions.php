@@ -101,7 +101,7 @@ function action_logout()
 function login_checkInput($input)
 {
     $user = NULL;
-    $errors = array();
+    $errors = [];
 
     if (empty($input['openid_url'])) {
         $errors[] = 'login_msg_no_email';
@@ -114,7 +114,7 @@ function login_checkInput($input)
         list($errors, $user) = db_authUserByEmail($input['openid_url'], $input['openid_pass']);
     }
 
-    return array($errors, $user);
+    return [$errors, $user];
 }
 
 /**

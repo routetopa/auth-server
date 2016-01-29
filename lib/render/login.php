@@ -24,6 +24,7 @@ function login_render($errors=null, $input=null, $needed=null)
     $t = getSmarty();
     $t->assign('login_url', $login_url);
     $t->assign('id_url', idURL('USERNAME'));
+    $t->assign('password_reset_url', buildURL('password_reset'));
     $t->assign('email', $esc_input);
     $t->assign('errors', $errors);
     return [ array(), $t->fetch('login.tpl') ];

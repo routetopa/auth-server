@@ -4,7 +4,7 @@
 <div class="form">
     <p>
         {t key='login_message'}
-        <pre>{$id_url}</pre>
+        {*<pre>{$id_url}</pre>*}
     </p>
 
     <form method="post" action="{$login_url}">
