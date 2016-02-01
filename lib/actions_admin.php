@@ -26,6 +26,8 @@ function action_admin_users() {
 }
 
 function action_admin_users_edit() {
+    if ( true !== ($authres = admin_check_auth())) { return $authres; }
+
     $uuid = getPathComponents(1);
 
     $user = db_getUserByUuid($uuid);
@@ -93,6 +95,8 @@ function action_admin_users_edit() {
 }
 
 function action_admin_users_create() {
+    if ( true !== ($authres = admin_check_auth())) { return $authres; }
+
     $user = [];
     $errors = [];
 
@@ -150,6 +154,8 @@ function action_admin_users_create() {
 }
 
 function action_admin_users_delete() {
+    if ( true !== ($authres = admin_check_auth())) { return $authres; }
+
     $uuid = getPathComponents(1);
 
     $user = db_getUserByUuid($uuid);

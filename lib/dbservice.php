@@ -246,7 +246,7 @@ function db_checkPasswordResetToken($email, $token) {
 
     if (!$errors) {
         $res = $store->connection->query(
-            'SELECT email, token, timestamp FROM password_reset WHERE email = ? ORDER BY timestamp DESC LIMIT 1',
+            'SELECT email, token, timestamp FROM password_reset WHERE email = ? AND DATEDIFF(timestamp, NOW()) < 2 ORDER BY timestamp DESC LIMIT 1',
             [$email]
         );
     }
