@@ -142,4 +142,20 @@ a.lang-it { background-image: url('./img/flag/IT.png'); }
 a.lang-nl { background-image: url('./img/flag/NL.png'); }
 a.lang-fr { background-image: url('./img/flag/FR.png'); }
 
+table.table {
+	border: 1px solid #ccc;
+}
 
+table.table th {
+	text-align: left;
+	border: 1px solid #ccc;
+	background-color: #eef;
+}
+
+table.table td {
+	border: 1px solid #ccc;
+}
+
+table.table tr:nth-child(even) {
+	background-color: #eee;
+}

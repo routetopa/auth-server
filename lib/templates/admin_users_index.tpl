@@ -9,14 +9,14 @@
         </span>
     </form>
 
-    <table>
+    <table class="table">
         <thead>
         <tr>
-            <td>Role</td>
-            <td>UUID</td>
-            <td>Email</td>
-            <td></td>
-            <td></td>
+            <th>Role</th>
+            <th>UUID</th>
+            <th>Email</th>
+            <th></th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
