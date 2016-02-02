@@ -1,7 +1,13 @@
 {include 'layout_header.tpl'}
     <h1>Manage OpenID accounts</h1>
 
-    <a href="./admin_users_create">Add new account</a>
+    <form action="./admin_users_create" style="margin-bottom: 2em;">
+        <span class="ow_button">
+            <span class="ow_positive">
+                <input type="submit" name="cancel" value="Add new account" class="ow_positive" />
+            </span>
+        </span>
+    </form>
 
     <table>
         <thead>
