@@ -81,6 +81,14 @@ return [
         1
     );
 
+    CREATE TABLE IF NOT EXISTS `password_reset` (
+      `email` varchar(200) NOT NULL,
+      `token` varchar(32) NOT NULL,
+      `timestamp` datetime NOT NULL,
+      PRIMARY KEY (`email`),
+      UNIQUE KEY `token` (`token`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
     Remember to set a valid and active t-mail address instead of
     'YOUR_ADMIN_EMAIL'. At this point you need to access the OpenID provider
     and reset your password before logging in.
