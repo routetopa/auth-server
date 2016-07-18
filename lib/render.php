@@ -21,6 +21,7 @@ define('redirect_message',
        'Please wait; you are being redirected to <%s>');
 
 function build_menu() {
+    global $config;
     global $server_url;
     $nav = [];
     $user = getLoggedInProfile();
@@ -33,6 +34,9 @@ function build_menu() {
         $nav[] = [ 'key' => 'nav_logout', 'url' => $server_url . '/logout' ];
     } else {
         $nav[] = [ 'key' => 'nav_login', 'url' => $server_url . '/login' ];
+        if ($config['allow_signin']) {
+            $nav[] = [ 'key' => 'nav_signin', 'url' => $server_url . '/signin' ];
+        }
     }
     return $nav;
 }

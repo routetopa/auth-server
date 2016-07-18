@@ -81,11 +81,14 @@ function db_authUserByEmail($email, $password) {
     return [$errors, $user];
 }
 
-function db_getUserByEmail($email) {
+function db_getUserByEmail($email, $include_unverified = false) {
     $store = getOpenIDStore();
     $errors = [];
+
+    $verified_condition = $include_unverified ? '' : " AND (is_verified=1) ";
+
     $res = $store->connection->query(
-        "SELECT uuid, email, is_admin FROM users WHERE email = ?",
+        "SELECT uuid, email, is_admin, is_verified FROM users WHERE (email = ?) {$verified_condition}",
         [ $email ]
     );
     if (PEAR::isError($res)) {
@@ -280,6 +283,104 @@ function db_removePasswordResetToken($user) {
     if (!$errors) {
         $res = $store->connection->query(
             'DELETE FROM password_reset WHERE email = ? LIMIT 1',
+            [$user['email']]
+        );
+    }
+
+    if (PEAR::isError($res)) {
+        $store->connection->rollback();
+        $token = null;
+        $isDeleted = false;
+    } else {
+        $store->connection->commit();
+        $isDeleted = true;
+    }
+
+    return [$isDeleted, $errors];
+}
+
+function db_createEmailVerifyToken($user) {
+    $store = getOpenIDStore();
+    $errors = [];
+    $token = null;
+    $res = null;
+
+    while (true) { // Will exit with a break...
+        $token = md5( $user['email'] . time() . openssl_random_pseudo_bytes(16) );
+        $res = $store->connection->query(
+            'DELETE FROM email_verify WHERE email = ?',
+            [$user['email']]
+        );
+
+        if (!(PEAR::isError($res))) {
+            $store->connection->query(
+                'INSERT INTO email_verify(email, token, timestamp) VALUES (?, ?, NOW())',
+                [$user['email'], md5($token)]);
+        }
+        if (PEAR::isError($res)) {
+            $store->connection->rollback();
+            $token = null;
+        } else {
+            $store->connection->commit();
+            break;
+        }
+    }
+
+    return [$token, $errors];
+}
+
+function db_checkEmailVerifyToken($email, $token) {
+    $store = getOpenIDStore();
+    $isValid = false;
+    $errors = [];
+    $res = null;
+
+    if (!$errors) {
+        $res = $store->connection->query(
+            //'SELECT email, token, timestamp FROM email_verify WHERE email = ? AND DATEDIFF(timestamp, NOW()) < 2 ORDER BY timestamp DESC LIMIT 1',
+            'SELECT email, token, timestamp FROM email_verify WHERE email = ? ORDER BY timestamp DESC LIMIT 1',
+            [$email]
+        );
+    }
+
+    if (!$errors && PEAR::isError($res)) {
+        $errors[] = 'Server error';
+    }
+
+    if (!$errors && $res->numRows() <= 0) {
+        $errors[] = 'signin_token_not_found';
+    }
+
+    if (!$errors) {
+        $row = $res->fetchRow();
+        if (md5($token) != $row['token']) {
+            $errors[] = 'signin_token_not_found';
+        } else {
+            $res = $store->connection->query(
+                'UPDATE users SET is_verified=1 WHERE email = ?',
+                [$email]
+            );
+            if (PEAR::isError($res)) {
+                $errors[] = 'Server error';
+                $isValid = false;
+            } else {
+                $isValid = true;
+            }
+        }
+    }
+
+    return [$isValid, $errors];
+}
+
+function db_removeEmailVerifyToken($user) {
+    $store = getOpenIDStore();
+    $isDeleted = false;
+    $errors = [];
+    $res = null;
+
+    if (!$errors) {
+        $res = $store->connection->query(
+            'DELETE FROM email_verify WHERE email = ? LIMIT 1',
             [$user['email']]
         );
     }

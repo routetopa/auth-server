@@ -436,3 +436,156 @@ function action_password_reset() {
             return '';
     }
 }
+
+function action_signin() {
+    $method = $_SERVER['REQUEST_METHOD'];
+    $signin_url = buildURL('signin', true);
+
+    switch ($method) {
+        case 'GET';
+            $token = @$_GET['token'] ?: '';
+            // ACCESS WITH TOKEN (verify token)
+
+            if ($token) {
+                $email = @$_GET['user'];
+                $user = null;
+                $errors = [];
+                $isValid = false;
+                if (!$email) {
+                    $errors[] = 'signin_missing_parameter';
+                }
+                if (!$errors) {
+                    $user = db_getUserByEmail($email, true);
+                    if (!$user) {
+                        $errors[] = 'signin_missing_parameter';
+                    }
+                }
+                if (!$errors) {
+                    list($isValid, $errors) = db_checkEmailVerifyToken($email, $token);
+                }
+                if (!$errors && $isValid) {
+                    db_removeEmailVerifyToken($user);
+                    setLoggedInUser($user);
+                    //return redirect_render( buildURL('signin?done=' . urlencode($email)) );
+                }
+                $t = getSmarty();
+                $t->assign('token', $token);
+                $t->assign('email', $user['email']);
+                $t->assign('errors', $errors);
+                return [ array(), $t->fetch('signin_done.tpl') ];
+
+            }
+            // SHOW SENT MESSAGE (access upon redirect)
+            $sent = @$_GET['sent'] ?: '';
+            if ($sent) {
+                $t = getSmarty();
+                $t->assign('email', urldecode($sent));
+                return [ array(), $t->fetch('signin_sent.tpl') ];
+            }
+            // ASK NEW ACCOUNT DETAILS
+            $t = getSmarty();
+            $t->assign('signin_url', $signin_url);
+            return [ array(), $t->fetch('signin.tpl') ];
+            break;
+        case 'POST':
+            $errors = [];
+            $email = @$_POST['openid_url'] ?: '';
+            $password = @$_POST['password'] ?: '';
+            $password_confirm = @$_POST['password_confirm'] ?: '';
+            $user = null;
+            $t = getSmarty();
+            $t->assign('signin_url', $signin_url);
+            $t->assign('email', $email);
+
+            if (!$email) {
+                $errors[] = 'signin_err_nomail';
+            }
+
+            if (!$password) {
+                $errors[] = 'signin_err_nopassword';
+            }
+
+            if (!$password_confirm) {
+                $errors[] = 'signin_err_nopasswordconfirm';
+            }
+
+            if ($password !== $password_confirm) {
+                $errors[] = 'signin_err_diffpassword';
+            }
+
+            // Check if user is present but not verified
+            $user = db_getUserByEmail($email, true);;
+            if ($user && $user['is_verified']==1) {
+                $errors[] = 'signin_err_alreadyverified';
+            }
+
+            if (!$errors && $user) {
+                $user['password'] = $password;
+                db_saveUser($user);
+            }
+
+            if (!$errors && !$user) {
+                $user = [
+                    'email' => $email,
+                    'password' => $password,
+                ];
+                list($user, $errors) = db_createUser($user);
+            }
+
+            if ($errors) {
+                $t->assign('errors', $errors);
+                return [ array(), $t->fetch('signin.tpl') ];
+            }
+
+            if ($user) {
+                list($token, $errors) = db_createEmailVerifyToken($user);
+            }
+
+            if ($errors) {
+                $t->assign('errors', $errors);
+                return [ array(), $t->fetch('signin.tpl') ];
+            }
+
+            if ($user) {
+                global $config;
+                require 'PHPMailerAutoload.php';
+
+                $tokenUrl = buildURL('signin?user=' . urlencode($user['email']) . '&token=' . $token);
+
+                $t = getSmarty();
+                $t->assign('home_url', buildURL());
+                $t->assign('reset_url', $tokenUrl);
+                $mailBody = $t->fetch('signin.mail.tpl');
+                $langs = $t->getTemplateVars('l');
+
+                $mail = new PHPMailer;
+                $mail->isSMTP();
+                $mail->Host = $config['mail']['host'];
+                $mail->SMTPAuth = $config['mail']['smtp_auth'];
+                $mail->Username = $config['mail']['username'];
+                $mail->Password = $config['mail']['password'];
+                $mail->SMTPSecure = $config['mail']['smtp_secure'];
+                $mail->Port = $config['mail']['port'];
+
+                $mail->setFrom($config['mail']['from_address'], $langs['signin_email_from_name']);
+                $mail->addAddress($user['email']);
+                $mail->isHTML(true);
+
+                $mail->Subject =  $langs['signin_email_subject'];
+                $mail->Body    = $mailBody;
+                $mail->AltBody = $langs['signin_email_content'] . "\r\n\r\n" . $tokenUrl;
+
+                if(!$mail->send()) {
+                    flash('message', 'message_mail_error', 'danger');
+                    //echo 'Mailer Error: ' . $mail->ErrorInfo;
+                } else {
+                    flash('message', 'message_mail_ok');
+                }
+                return redirect_render( buildURL('signin?sent=' . urlencode($email)) );
+            }
+
+            return [ array(), $t->fetch('signin.tpl') ];
+        default:
+            return '';
+    }
+}
