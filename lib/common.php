@@ -25,6 +25,9 @@ function doAuth($info, $trusted=null, $fail_cancels=false,
                 $idpSelect=null)
 {
     if (!$info) {
+        if (isset($_POST['redirect_success'])) {
+            return redirect_render($_POST['redirect_success']);
+        }
         // There is no authentication information, so bail
         return authCancel(null);
     }
