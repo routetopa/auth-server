@@ -11,6 +11,9 @@ return [
     // Full URL of OpenID provider index
     'server_url' => 'http://spod.routetopa.eu/openid',
 
+    // True if users can sign in, false if users shall be added by admin
+    'allow_signin' => false,
+
     /*
      * DATABASE CONFIGURATION
      */
