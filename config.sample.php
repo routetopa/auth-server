@@ -19,6 +19,8 @@ return [
         'phptype'  => 'mysql',
         // MySQL username
         'username' => 'your_sql_username',
+        // Database name
+        'dbname' => 'openid',
         // MySQL password
         'password' => 'your_sql_password',
         // MySQL Server address. Use 'localhost' if the MySQL daemon is on the same host.

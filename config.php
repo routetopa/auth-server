@@ -36,7 +36,7 @@ function getOpenIDStore()
         return null;
     }
 
-    $db->query("USE openid");
+    $db->query("USE {$config['db']['dbname']}");
         
     $s = new Auth_OpenID_MySQLStore($db);
 
