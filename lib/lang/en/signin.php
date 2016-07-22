@@ -13,7 +13,7 @@ return [
     'signin_err_nomail' => 'Please insert your e-mail address',
     'signin_err_nopassword' => 'Please insert a password',
     'signin_err_nopasswordconfirm' => 'Please confirm your password',
-    'signin_err_diffpassword' => 'Password and Password confirm does not match',
+    'signin_err_diffpassword' => 'Password and Password confirm do not match',
     'signin_err_alreadyverified' => 'The user is already present',
 
 ];
