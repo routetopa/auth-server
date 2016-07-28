@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'signin_heading' => 'Signin',
+    'signin_heading' => 'Sign up',
     'signin_message' => 'You can now login using your email and password ',
 
     'signin_token_not_found' => 'Token not found or no longer valid',

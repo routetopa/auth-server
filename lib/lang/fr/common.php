@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'nav_login' => 'Log in',
-    'nav_logout' => 'Log out',
+    'nav_login' => 'Se connecter',
+    'nav_logout' => 'Sortir',
     'nav_admin' => 'Admin',
-    'nav_profile' => 'Your profile',
-    'nav_signin' => 'Sign up',
+    'nav_profile' => 'Votre profil',
+    'nav_signin' => 'Se connecter',
 
-    'message_login_ok' => 'You are now logged in.',
+    'message_login_ok' => 'Vous êtes identifié',
     'password_mismatch' => 'Password and confirmation do not match',
 
     'message_mail_error' => 'Mail error',
