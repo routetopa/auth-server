@@ -438,6 +438,11 @@ function action_password_reset() {
 }
 
 function action_signin() {
+    global $config;
+    if (!$config['allow_signin']) {
+        return redirect_render( buildURL() );
+    }
+
     $method = $_SERVER['REQUEST_METHOD'];
     $signin_url = buildURL('signin', true);
 
