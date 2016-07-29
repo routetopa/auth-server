@@ -45,4 +45,20 @@ function getOpenIDStore()
     return $s;
 }
 
+function getConfigFilename() {
+    if (file_exists('config.dev.php')) {
+        return 'config.dev.php';
+    }
+    if (file_exists('config.prod.php')) {
+        return 'config.prod.php';
+    }
+    return null;
+}
+
+function saveConfig() {
+    global $config;
+
+    file_put_contents( getConfigFilename(), '<?php return ' . var_export($config, true) . ';');
+}
+
 include('lib/templates.php');

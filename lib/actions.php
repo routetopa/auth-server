@@ -439,8 +439,11 @@ function action_password_reset() {
 
 function action_signin() {
     global $config;
+    $t = getSmarty();
+
     if (!$config['allow_signin']) {
-        return redirect_render( buildURL() );
+        return [ array(), $t->fetch('signin_disabled.tpl') ];
+        //return redirect_render( buildURL() );
     }
 
     $method = $_SERVER['REQUEST_METHOD'];
@@ -473,7 +476,6 @@ function action_signin() {
                     setLoggedInUser($user);
                     //return redirect_render( buildURL('signin?done=' . urlencode($email)) );
                 }
-                $t = getSmarty();
                 $t->assign('token', $token);
                 $t->assign('email', $user['email']);
                 $t->assign('errors', $errors);

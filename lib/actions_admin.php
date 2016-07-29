@@ -16,12 +16,15 @@ function admin_check_auth() {
 }
 
 function action_admin_users() {
+    global $config;
+
     if ( true !== ($authres = admin_check_auth())) { return $authres; }
 
     $res = db_getUsers();
 
     $t = getSmarty();
     $t->assign( 'users', $res );
+    $t->assign( 'allow_signup', $config['allow_signin'] );
     return [ array(), $t->fetch('admin_users_index.tpl') ];
 }
 
@@ -207,6 +210,34 @@ function action_admin_users_delete() {
 
             $res = db_deleteUser($user);
             return redirect_render('../admin_users');
+            break;
+
+        default:
+            die();
+    }
+}
+
+function action_admin_users_signup_status() {
+    if ( true !== ($authres = admin_check_auth())) { return $authres; }
+
+    global $config;
+
+    $method = strtoupper($_SERVER['REQUEST_METHOD']);
+
+    switch ($method) {
+
+        case 'POST':
+            if (!isset($_POST['status'])) {
+                die();
+            }
+
+            $status = $_POST['status'] == 0 ? false : true;
+            $config['allow_signin'] = $status;
+            saveConfig();
+
+            return redirect_render(buildURL('admin_users'));
+            //return redirect_render('../admin_users');
+
             break;
 
         default:
