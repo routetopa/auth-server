@@ -476,7 +476,7 @@ function action_signin() {
                 if (!$errors && $isValid) {
                     db_removeEmailVerifyToken($user);
                     setLoggedInUser($user);
-                    //return redirect_render( buildURL('signin?done=' . urlencode($email)) );
+                    return redirect_render( buildURL('/') );
                 }
                 $t->assign('token', $token);
                 $t->assign('email', $user['email']);
