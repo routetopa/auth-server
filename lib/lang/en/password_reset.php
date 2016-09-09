@@ -2,7 +2,7 @@
 
 return [
     'pwdrst_heading' => 'Password reset',
-    'pwdrst_message' => 'Type your e-mail address. You will receive an email with instruction on how to reset your password',
+    'pwdrst_message' => 'Type your e-mail address. You will receive an email with instruction on how to reset your password.',
     'pswrst_email' => 'E-mail:',
     'pwdrst_btn_submit' => 'Ask reset',
     'pwdrst_btn_cancel' => 'Cancel',

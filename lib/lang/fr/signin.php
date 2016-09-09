@@ -14,6 +14,6 @@ return [
     'signin_err_nopassword' => 'Veuillez entrer votre mot de passe',
     'signin_err_nopasswordconfirm' => "S'il vous plaît, confirmer mot de passe",
     'signin_err_diffpassword' => 'Votre mot de passe ne correspond pas à la confirmation que vous avez rentrée',
-    'signin_err_alreadyverified' => 'L’utilisateur est déjà présent',
+    'signin_err_alreadyverified' => 'L\'utilisateur est déjà présent',
 
 ];

@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'pwdrst_heading' => 'Password reset',
-    'pwdrst_message' => 'Soon you will receive instructions to reset your password at the email address ',
+    'pwdrst_heading' => 'Réinitialisation de votre mot de passe',
+    'pwdrst_message' => 'Vous allez bientôt recevoir un email avec les instructions concernant la réinitialisation de votre mot de passe.'
 ];

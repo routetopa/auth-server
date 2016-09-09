@@ -2,7 +2,6 @@
 
 return [
     'login_heading' => 'Sign in',
-    //'login_message' => 'Please log in using your email and password. Your identity URL will be in this form:',
     'login_message' => 'Please log in using your email and password.',
     'login_email' => 'E-mail:',
     'login_password' => 'Password:',

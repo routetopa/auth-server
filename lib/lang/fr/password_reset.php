@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'pwdrst_heading' => 'Password reset',
-    'pwdrst_message' => 'Type your e-mail address. You will receive an email with instruction on how to reset your password',
+    'pwdrst_heading' => 'Réinitialisation de votre mot de passe',
+    'pwdrst_message' => 'Entrez votre adresse mail. Vous allez recevoir un email avec les instructions concernant la réinitialisation de votre mot de passe.',
     'pswrst_email' => 'E-mail:',
-    'pwdrst_btn_submit' => 'Ask reset',
-    'pwdrst_btn_cancel' => 'Cancel',
+    'pwdrst_btn_submit' => 'Demander une réinitialisation',
+    'pwdrst_btn_cancel' => 'Annuler',
 
-    'pwdrst_err_nomail' => 'Please insert your e-mail address',
-    'pwdrst_err_nouser' => 'The mail address does not exist in our database',
+    'pwdrst_err_nomail' => 'Veuillez entrer votre adresse mail',
+    'pwdrst_err_nouser' => 'Cette adresse mail n\'existe pas dans notre base de données',
 
-    'pwdrst_token_not_found' => 'Token not found or no longer valid',
-    'pwdrst_missing_parameter' => 'Request not valid',
+    'pwdrst_token_not_found' => 'Impossible de trouver le code, il n’est plus valable',
+    'pwdrst_missing_parameter' => 'Requête non valide',
 ];
