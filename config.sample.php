@@ -60,7 +60,18 @@ return [
     'trusted_roots' => [
         'localhost',
         'spod.routetopa.eu',
-    ]
+    ],
+
+    /*
+     * LINKED PLATFORMS LOGIN URLS
+     * A list of platform (SPOD, TET) that may use this OpenID Server for
+     * authentication. This is used to force platforms to start an OpenID
+     * request to this OpenID server.
+     */
+    'login_urls' => [
+        'SPOD' => 'http://spod.routetopa.eu/openid-connect/login',
+        'TET' => 'http://tet.routetopa.eu:8080/user/oilogin?id=http%3A%2F%2Fspod.routetopa.eu%2Fopenid%2F',
+    ],
 ];
 
 /* ****************************************************************************

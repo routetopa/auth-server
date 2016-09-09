@@ -32,9 +32,11 @@ function action_default()
     $request = $server->decodeRequest();
 
     if (!$request) {
+        global $config;
         $t = getSmarty();
+        $t->assign( 'user', getLoggedInUser() );
+        $t->assign( 'login_urls', array_key_exists( 'login_urls', $config) ? $config['login_urls'] : [] );
         return [ array(), $t->fetch('index.tpl') ];
-        //return about_render();
     }
 
     setRequestInfo($request);

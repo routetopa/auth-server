@@ -66,6 +66,7 @@ body {
 #content {
     padding: 0.5em;
     max-width: 50em;
+	margin: 0 auto;
 }
 
 ul.error {
@@ -158,4 +159,22 @@ table.table td {
 
 table.table tr:nth-child(even) {
 	background-color: #eee;
+}
+
+.ow_button a {
+	height: 36px;
+	line-height: 36px;
+	padding: 0 1em;
+}
+
+.ow_button .ow_positive a {
+	color: #fff;
+}
+
+.padded {
+	padding: 2em 0;
+}
+
+.padded .ow_button {
+	margin-right: 1em;
 }
