@@ -454,6 +454,12 @@ function action_signin() {
     switch ($method) {
         case 'GET';
             $token = @$_GET['token'] ?: '';
+            
+            // Fix for webclient with html entity escape
+            if (!$token) {
+                $token = @$_GET['amp;token'] ?: '';
+            }
+
             // ACCESS WITH TOKEN (verify token)
 
             if ($token) {
