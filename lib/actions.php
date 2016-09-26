@@ -279,6 +279,12 @@ function action_password_reset() {
     switch ($method) {
         case 'GET';
             $token = @$_GET['token'] ?: '';
+
+            // Fix for webclient with html entity escape
+            if (!$token) {
+                $token = @$_GET['amp;token'] ?: '';
+            }
+
             // ACCESS WITH TOKEN (ask new password)
             if ($token) {
                 $email = @$_GET['user'];
