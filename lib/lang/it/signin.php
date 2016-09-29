@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'signin_heading' => 'Accedi',
+    'signin_heading' => 'Registrati',
     'signin_message' => 'Inserisci il tuo indirizzo email e sceglie una password. Riceverai una email con le istruzioni per confermare il tuo account.',
     'signin_email' => 'E-mail:',
     'signin_pass' => 'Password:',
@@ -14,6 +14,6 @@ return [
     'signin_err_nopassword' => 'Per favore inserisci una password',
     'signin_err_nopasswordconfirm' => 'Per favore conferma la tua password',
     'signin_err_diffpassword' => 'La password non concide con la password di conferma',
-    'signin_err_alreadyverified' => "L' utente è già presente",
+    'signin_err_alreadyverified' => 'L\'utente &egrave; già presente',
 
 ];

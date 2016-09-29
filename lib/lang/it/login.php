@@ -2,7 +2,7 @@
 
 return [
     'login_heading' => 'Accedi',
-    'login_message' => 'Accedi usando e-mail e password in tuo possesso. La tua URL identificativa sar&agrave:',
+    'login_message' => 'Accedi usando e-mail e password in tuo possesso.',
     'login_email' => 'E-mail:',
     'login_password' => 'Password:',
     'login_btn_login' => 'Accedi',
