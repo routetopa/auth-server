@@ -8,8 +8,8 @@ return [
     /*
      * GENERAL CONFIGURATION
      */
-    // Full URL of OpenID provider index
-    'server_url' => 'http://spod.routetopa.eu/openid',
+    // Full URL of this OpenID provider index
+    'server_url' => 'http://your-site/openid/index.php',
 
     // True if users can sign in, false if users shall be added by admin
     'allow_signin' => false,
@@ -58,8 +58,8 @@ return [
      * Only insert full hostnames (without protocol, subdirectories, etc...
      */
     'trusted_roots' => [
-        'localhost',
-        'spod.routetopa.eu',
+        'localhost', // May be useful while testing on a local machine
+        'your-site',
     ],
 
     /*
@@ -69,44 +69,7 @@ return [
      * request to this OpenID server.
      */
     'login_urls' => [
-        'SPOD' => 'http://spod.routetopa.eu/openid-connect/login',
-        'TET' => 'http://tet.routetopa.eu:8080/user/oilogin?id=http%3A%2F%2Fspod.routetopa.eu%2Fopenid%2F',
+        'SPOD' => 'http://your-site/openid-connect/login',
+        'TET' => 'http://tet.your-site:8080/user/oilogin?id=http%3A%2F%2Fyour-site%2Fopenid%2F',
     ],
 ];
-
-/* ****************************************************************************
-   DATABASE SETUP
-   ****************************************************************************
-
-   In order to work, the ROUTE-TO-PA OpenID Provider needs the 'users' table.
-   Please execute this query to create it:
-
-    CREATE TABLE IF NOT EXISTS `users` (
-      `uuid` char(36) NOT NULL,
-      `email` varchar(200) NOT NULL,
-      `password` varchar(200) NOT NULL,
-      `is_admin` tinyint(1) NOT NULL DEFAULT '0',
-      PRIMARY KEY (`uuid`),
-      UNIQUE KEY `email` (`email`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-    INSERT INTO `users` VALUES(
-        UUID(),
-        'YOUR_ADMIN_EMAIL',
-        '',
-        1
-    );
-
-    CREATE TABLE IF NOT EXISTS `password_reset` (
-      `email` varchar(200) NOT NULL,
-      `token` varchar(32) NOT NULL,
-      `timestamp` datetime NOT NULL,
-      PRIMARY KEY (`email`),
-      UNIQUE KEY `token` (`token`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-    Remember to set a valid and active t-mail address instead of
-    'YOUR_ADMIN_EMAIL'. At this point you need to access the OpenID provider
-    and reset your password before logging in.
-
-*/
