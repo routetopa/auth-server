@@ -8,13 +8,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `users` VALUES(
-    UUID(),
-    'webmaster@routetopa.eu',
-    '',
-    1
-);
-
 CREATE TABLE IF NOT EXISTS `password_reset` (
   `email` varchar(200) NOT NULL,
   `token` varchar(32) NOT NULL,
