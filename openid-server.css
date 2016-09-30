@@ -137,12 +137,6 @@ input {
 	border-color: #ebccd1;
 }
 
-a.lang { background-position: 12px 50%; background-repeat: no-repeat; padding-left: 36px !important; }
-a.lang-en { background-image: url('./img/flag/GB.png'); }
-a.lang-it { background-image: url('./img/flag/IT.png'); }
-a.lang-nl { background-image: url('./img/flag/NL.png'); }
-a.lang-fr { background-image: url('./img/flag/FR.png'); }
-
 table.table {
 	border: 1px solid #ccc;
 }
