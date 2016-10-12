@@ -456,6 +456,7 @@ function action_signin() {
 
     $method = $_SERVER['REQUEST_METHOD'];
     $signin_url = buildURL('signin', true);
+    $policies = isset($config['policies']) ? $config['policies'] : [];
 
     switch ($method) {
         case 'GET';
@@ -506,6 +507,7 @@ function action_signin() {
             // ASK NEW ACCOUNT DETAILS
             $t = getSmarty();
             $t->assign('signin_url', $signin_url);
+            $t->assign('policies', $policies);
             return [ array(), $t->fetch('signin.tpl') ];
             break;
         case 'POST':
@@ -516,6 +518,7 @@ function action_signin() {
             $user = null;
             $t = getSmarty();
             $t->assign('signin_url', $signin_url);
+            $t->assign('policies', $policies);
             $t->assign('email', $email);
 
             if (!$email) {
@@ -532,6 +535,20 @@ function action_signin() {
 
             if ($password !== $password_confirm) {
                 $errors[] = 'signin_err_diffpassword';
+            }
+
+            // Check if all policies were accepted
+            $policyCnt = isset($config['policies']) ? count($config['policies']) : 0;
+            if ($policyCnt) {
+                $acceptedCnt = 0;
+                foreach ($_POST as $k => $v) {
+                    if (substr($k, 0, strlen('policies_')) == 'policies_') {
+                        $acceptedCnt++;
+                    }
+                }
+                if ($acceptedCnt != $policyCnt) {
+                    $errors[] = 'signin_err_policies';
+                }
             }
 
             // Check if user is present but not verified

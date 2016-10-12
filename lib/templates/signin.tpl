@@ -22,6 +22,18 @@
             </tr>
             <tr>
                 <td colspan="2">
+                    {foreach from=$policies item=p name=policies}
+                        <div style="padding: 1em;">
+                            <label>
+                                <input type="checkbox" name="policies_{$smarty.foreach.policies.iteration}">
+                                {t key='signin_policy_checkbox'} <a href="{$p.url}" target="_blank">{$p.title}</a>
+                            </label>
+                        </div>
+                    {/foreach}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
                     <span class="ow_button">
                         <span class="ow_positive">
                             <input type="submit" value="{t key='signin_btn_submit'}" class="ow_positive" />

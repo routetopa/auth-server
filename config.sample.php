@@ -72,4 +72,17 @@ return [
         'SPOD' => 'http://your-site/openid-connect/login',
         'TET' => 'http://tet.your-site:8080/user/oilogin?id=http%3A%2F%2Fyour-site%2Fopenid%2F',
     ],
+
+    /*
+     * POLICIES
+     * A list of Policies that the user MUST accept before registering.
+     */
+    'policies' => [
+        /*
+        [
+            'url' => '',
+            'title' => '',
+        ],
+        */
+    ],
 ];

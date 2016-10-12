@@ -16,4 +16,7 @@ return [
     'signin_err_diffpassword' => 'La password non concide con la password di conferma',
     'signin_err_alreadyverified' => 'L\'utente &egrave; già presente',
 
+    'signin_policy_checkbox' => 'I accept the',
+    'signin_err_policies' => 'Per favore leggi e accetta tutte le condizioni d\'uso',
+
 ];

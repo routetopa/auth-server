@@ -16,4 +16,7 @@ return [
     'signin_err_diffpassword' => 'Password and Password confirm does not match',
     'signin_err_alreadyverified' => 'The user is already present',
 
+    'signin_policy_checkbox' => 'I accept the',
+    'signin_err_policies' => 'You must read and accept our policies',
+
 ];

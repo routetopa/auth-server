@@ -16,4 +16,7 @@ return [
     'signin_err_diffpassword' => 'Votre mot de passe ne correspond pas à la confirmation que vous avez rentrée',
     'signin_err_alreadyverified' => 'L\'utilisateur est déjà présent',
 
+    'signin_policy_checkbox' => 'I accept the',
+    'signin_err_policies' => 'You must read and accept our policies',
+
 ];
