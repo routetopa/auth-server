@@ -48,7 +48,7 @@
         </tr>
         </thead>
         <tbody>
-{while $user=$users->fetchRow()}
+{while $users->fetchInto($user)}
         <tr>
             <td>{if $user.is_admin}admin{/if}</td>
             <td><span class="uuid">{$user.uuid}</span></td>
